@@ -117,6 +117,13 @@ Result:
 Result: `<link rel="stylesheet" href="<?= $this->asset('css/css_name.css', true) ?>">`
 27. `jsasset`
 Result: `<script src="<?= $this->asset('js/js_name.js', true) ?>"></script>`
+28. `render`
+Result: 
+`echo $view->render('name::index', 
+    [
+        'key' => $value
+    ]
+);`
 
 
 Additional abbreviations are added slowly

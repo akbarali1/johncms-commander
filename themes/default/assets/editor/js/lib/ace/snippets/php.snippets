@@ -97,9 +97,29 @@ snippet rights
 		${2:// code...}
 	}
 snippet admin
-	if (\$user->rights >= ${1:darjasi} && \$user->isValid()) {
+	if (\$user->rights >= ${1:rights_number} && \$user->isValid()) {
 		${2:// code...}
 	}
+snippet render
+	echo \$view->render('${1:name}::index', 
+		[
+			'${2:key}' => $${3:value}
+		]
+	);
+snippet jcmsact
+	\$act = \$route['action'] ?? '';
+snippet route
+	\$route = di('route');
+snippet config
+	\$config = di('config')['johncms'];
+snippet view
+	\$view = di(Johncms\System\View\Render::class);
+snippet NavChain
+	\$nav_chain = di(Johncms\NavChain::class);
+snippet viewfolder
+	$view->addFolder('${1:folder_name}', __DIR__ . '/templates/');
+snippet NavChainadd
+	$nav_chain->add('${1:name}', '/${1:folder_link/');
 scope html
 snippet cssasset\n\
 	<link rel="stylesheet" href="<?= \$this->asset('css/${1:css_name}.css', true) ?>">
