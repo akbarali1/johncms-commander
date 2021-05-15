@@ -1,6 +1,7 @@
 # [JohnCMS](https://johncms.com)
 
-File view editing module for Johncms 9
+
+Tez orada Readme yoziladi	File view editing module for Johncms 9
 
 The file editor allows you to quickly write the most commonly used codes of johncms.
 
@@ -117,13 +118,10 @@ Result:
 Result: `<link rel="stylesheet" href="<?= $this->asset('css/css_name.css', true) ?>">`
 27. `jsasset`
 Result: `<script src="<?= $this->asset('js/js_name.js', true) ?>"></script>`
-28. `render`
-Result: 
-`echo $view->render('name::index', 
-    [
-        'key' => $value
-    ]
-);`
 
 
 Additional abbreviations are added slowly
+0 comments on commit 36b12f0
+@akbarali1
+ 
+ 
