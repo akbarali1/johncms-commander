@@ -1,2 +1,3 @@
-# johncms-commander
-File module for Johncms 9
+# [JohnCMS](https://johncms.com)
+
+Tez orada Readme yoziladi
