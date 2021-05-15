@@ -117,9 +117,9 @@ snippet view
 snippet NavChain
 	\$nav_chain = di(Johncms\NavChain::class);
 snippet viewfolder
-	$view->addFolder('${1:folder_name}', __DIR__ . '/templates/');
+	\$view->addFolder('${1:folder_name}', __DIR__ . '/templates/');
 snippet NavChainadd
-	$nav_chain->add('${1:name}', '/${1:folder_link/');
+	\$nav_chain->add('${1:name}', '/${2:folder_link}/');
 scope html
 snippet cssasset\n\
 	<link rel="stylesheet" href="<?= \$this->asset('css/${1:css_name}.css', true) ?>">
