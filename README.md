@@ -75,5 +75,19 @@ The file editor allows you to quickly write the most commonly used codes of john
 28. `render`
     Result:
     `echo $view->render('name::index', [ 'key' => $value ] );`
+29. `jcmsact`
+    Result: `$act = $route['action'] ?? '';`
+30. `route`
+    Result: `$route = di('route');`
+31. `config`
+    Result: `$config = di('config')['johncms'];`
+32. `view`
+    Result: `$view = di(Johncms\System\View\Render::class);`
+33. `NavChain`
+    Result: `$nav_chain = di(Johncms\NavChain::class);`
+34. `viewfolder`
+    Result: `$view->addFolder('folder_name', __DIR__ . '/templates/');`
+35. `NavChainadd`
+    Result: `$nav_chain->add('name', '/folder_link/');`
 
 Additional abbreviations are added slowly
