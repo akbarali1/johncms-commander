@@ -1,3 +1,112 @@
+# johncms uchun Akbarali tomonidan yozilgan Snipetlar
+# https://t.me/kbarali
+snippet jcmsrequest
+	/** @var \Johncms\System\Http\Request \$request */
+	\$request = di(\Johncms\System\Http\Request::class);
+snippet jcmsqueryint
+	$${1:query} = \$request->getQuery('$1', 0, FILTER_VALIDATE_INT);
+snippet jcmspoststr
+	$${1:query} = \$request->getPost('$1', '', FILTER_SANITIZE_STRING);
+snippet jcmspostint
+	$${1:query} = \$request->getPost('$1', '', FILTER_VALIDATE_INT);
+snippet jcmscontroller
+	namespace ${1:Controllar_name}\Controllers;
+	use Johncms\Controller\BaseController;
+	class $1Controller extends BaseController
+	{
+		public function index()
+		{
+		}
+	}
+snippet DB:
+	\$connection = \Illuminate\Database\Capsule\Manager::connection();
+snippet DB:get
+	$${1:table_name} = \$connection->table('$1')->get();
+snippet DB:first
+	$${1:table_name} = \$connection->table('$1')->where('${2:colum}', '${3:value}')->first();
+snippet DB:paginate
+	$${1:table_name} = \$connection->table('$1')->paginate(${2:page_size});
+	$$1_pagination = $$1->render();
+snippet DB:descget
+	$${1:table_name} = \$connection->table('$1')->orderByDesc('${2:colum}')->get();
+snippet DB:descpaginate
+	$${1:table_name} = \$connection->table('$1')->orderByDesc('${2:colum}')->paginate(${3:page_size});
+	$$1_pagination = $$1->render();
+snippet DB:asccget
+	$${1:table_name} = \$connection->table('$1')->orderBy('${2:colum}', 'asc')->get();
+snippet DB:ascpaginate
+	$${1:table_name} = \$connection->table('$1')->orderBy('${2:colum}', 'asc')->paginate(${3:page_size});
+	$$1_pagination = $$1->render();
+snippet DB:insert	
+	\$connection->table('${1:table_name}')->insert(
+		[
+			'${2:colum}' => '${3:value}',
+		]
+	);
+snippet DB:insertGetId
+	\$id_${1:table_name} = \$connection->table('$1')->insertGetId(
+		[
+			'${2:colum}' => '${3:value}',
+		]
+	);
+snippet DB:insertarray
+	\$id_${1:table_name} = \$connection->table('$1')->insertGetId(
+		[
+			'${2:colum}' => '${3:value}',
+		],
+		[
+			'$2' => '${4:value}',
+		],
+		[
+			'$2' => '${5:value}',
+		],
+	);
+snippet DB:update
+	\$connection->table('${1:table_name}')->where('${2:colum}', '=', ${3:value})
+		->update(
+			[
+				'${4}' => '${5}',
+			]
+		);
+snippet DB:updateOrInsert
+	\$connection->table('${1:table_name}')
+		->updateOrInsert(
+			[
+				'${2:colum}' => '${3:value}',
+			],
+			[
+				'${4:colum}' => '${5:colum}',
+			]
+		);
+snippet DB:delete
+	\$connection->table('${1:table_name}')->where('${2:colum}', '=', '${3:value}')->delete();
+snippet DB:truncate
+	\$connection->table('${1:table_name}')->truncate();
+snippet jcmsuser
+	\$user = di(Johncms\Users\User::class);
+snippet jcmsuserid
+	\$user->id
+snippet jcmsusername
+	\$user->name
+snippet isValid
+	if (\$user->isValid()) {
+		${1:// code...}
+	}
+snippet rights
+	if (\$user->rights >= ${1:darjasi} && \$user->isValid()) {
+		${2:// code...}
+	}
+snippet admin
+	if (\$user->rights >= ${1:darjasi} && \$user->isValid()) {
+		${2:// code...}
+	}
+scope html
+snippet cssasset\n\
+	<link rel="stylesheet" href="<?= \$this->asset('css/${1:css_name}.css', true) ?>">
+snippet jsasset\n\
+	<script src="<?= \$this->asset('js/${1:js_name}.js', true) ?>"></script>
+# Johncms uchun snippetlar tugadi 
+
 snippet ec
 	echo ${1};
 snippet ns
