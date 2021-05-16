@@ -9,7 +9,7 @@ namespace Editor\Controllers;
 
 use Johncms\Controller\BaseController;
 
-require 'vsconfig.php';
+require 'yadro.php';
 
 class VsCodeEditorController extends BaseController
 {
