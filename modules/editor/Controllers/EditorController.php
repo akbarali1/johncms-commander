@@ -1,10 +1,15 @@
 <?php
+/*
+* Fayl menjr Akbarali tomonidan yozildi.
+* Johncms Profile Link: https://johncms.com/profile/?user=38217
+* Those who want to sponsor: Webmoney WMR: R853215959425, Webmoney WMZ: Z401474330355, Webmoney WMY: Y194307290426
+*/
 
 namespace Editor\Controllers;
 
-define('MAIN_DIR', '.');
-
 use Johncms\Controller\BaseController;
+
+require 'yadro.php';
 
 class EditorController extends BaseController
 {
@@ -12,59 +17,36 @@ class EditorController extends BaseController
 
     public function index()
     {
+        $title = 'Johncms File Commander';
         // Устанавливаем заголовок страницы в теге title и h1
         $this->render->addData(
             [
-                'title'      => 'Johncms File Commander',
+                'title'      => $title,
             ]
         );
         // Добавляем страницу в цепочку навигации
-        $this->nav_chain->add('Editor', '/editor/');
+        $this->nav_chain->add($title, '/editor/');
 
-        return $this->render->render('editor::index', ['title' => 'Johncms File Commander']);
+        return $this->render->render('editor::index', ['title' => $title]);
     }
     public function scan()
     {
         $dir = MAIN_DIR;
-        function scan($dir)
-        {
-            $files = array();
-            if (file_exists($dir)) {
-                foreach (scandir($dir) as $f) {
-                    if (!$f || $f[0] == '.') {
-                        continue; // Ignore hidden files
-                    }
-                    if (is_dir($dir . '/' . $f)) {
-                        // The path is a folder
-                        $files[] = array(
-                            "name" => $f,
-                            "type" => "folder",
-                            "path" => $dir . '/' . $f,
-                            "time" => date("d F Y H:i", filectime($dir . '/' . $f)),
-                            "items" => scan($dir . '/' . $f) // Recursively get the contents of the folder
-                        );
-                    } else {
-                        // It is a file
-                        $files[] = array(
-                            "name" => $f,
-                            "type" => "file",
-                            "path" => $dir . '/' . $f,
-                            "time" => date("d F Y H:i", filectime($dir . '/' . $f)),
-                            "size" => filesize($dir . '/' . $f) // Gets the size of this file
-                        );
-                    }
-                }
-            }
-            return $files;
-        }
         $response = scan($dir);
         // Output the directory listing as JSON
         header('Content-type: application/json');
-        return json_encode(array("name" => $dir, "type" => "folder", "path" => $dir, "items" => $response));
+        return json_encode(
+            array(
+                "name" => $dir,
+                "type" => "folder",
+                "path" => $dir,
+                "items" => $response
+            ),
+            JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT
+        );
     }
     public function api()
     {
-        require 'yadro.php';
         header('Content-type: application/json');
 
         switch ($_POST['action']) {
@@ -142,27 +124,18 @@ class EditorController extends BaseController
                     }
                 }
                 break;
-            case 'rename-folder':
-                if (isset($_POST['oldname'])) {
-                    $newname = $_POST['newname'];
-                    $oldname = $_POST['oldname'];
-                    if (is_dir($oldname)) {
-                        rename($oldname, $newname);
-                        return json_success('OK');
-                    } else {
-                        return json_error('Bunday nomda papka mavjud emas');
-                    }
-                }
-                break;
-            case 'rename-file':
+            case 'rename':
                 $oldfilename = $_POST['oldfilename'];
                 $newname = $_POST['newname'];
                 if (isset($oldfilename)) {
                     if (file_exists($oldfilename)) {
                         rename($oldfilename, $newname);
                         return json_success('OK');
+                    } else  if (is_dir($oldfilename)) {
+                        rename($oldfilename, $newname);
+                        return json_success('OK');
                     } else {
-                        return json_error('Bunday nomdagi fayl yo`q');
+                        return json_error('Bunday nomdagi fayl ham papka ham yo`q');
                     }
                 }
                 break;

@@ -5,6 +5,30 @@
 */
 const API_URL = '../api/';
 
+$(function() {
+  $("#files > div").jstree({
+      state: {
+          key: "pheditor"
+      },
+      plugins: ["state"]
+  });
+});
+
+function getselecttree(){
+  return $(".jstree-clicked").attr("class").split(' ')[1];
+}
+
+var isTreeOpen = false;
+
+function jstreeToggleState() {
+  if (isTreeOpen) {
+      $(".jstree").jstree('open_all');
+  } else {
+      $(".jstree").jstree('close_all');
+  }
+  isTreeOpen = !isTreeOpen;
+}
+
 function save_file(idbu) {
   var contents = $('textarea#adsafadsfasd_' + idbu).val(), fayl_yoli = $('input#fayl_yoli_' + idbu).val();
   $.ajax({
@@ -80,7 +104,7 @@ function reloadFiles(hash) {
        $("#files > div").jstree("destroy");
        $("#files > div").html(data.data);
        $("#files > div").jstree();
-      // $("#files > div a:first").click();
+       $("#files > div a:first").click();
        if (hash) {
          $("#files a[data-file=\"" + hash + "\"], #files a[data-dir=\"" + hash + "\"]").click();
        }
@@ -90,39 +114,42 @@ function reloadFiles(hash) {
     
     $("#files").on("click", "a[data-file]", function() {
       var foldername = $(this).attr("data-file");
-
+      $("input#hozirclick").val(foldername);
+      $("#clickfilename").val(foldername);
+/*
       $("#renamefolder").hide();
       $("#renamefile").show();
-
       $("#newfolder").hide();
-      $("#clickfilename").val(foldername);
       $("#delletefolder").hide();
       $("#delletefile").show();
       $("#newfile").show();
+      */
     });
 
 $("#files").on("dblclick", "a[data-file]", function() {
     var faylyoli = $(this).attr("data-file");
-    $("#renamefolder").hide();
-    $("#renamefile").show();
+    $("input#hozirclick").val(faylyoli);
     $("#openfilename").val(faylyoli);
     $("#newfolder").hide();
     $("#newfile").show();
-    $("#delletefolder").hide();
-    $("#delletefile").show();
+    // $("#renamefolder").hide();
+    // $("#renamefile").show();
+    // $("#delletefolder").hide();
+    // $("#delletefile").show();
     open_ace(faylyoli);
 });
 
 $(document).on('click', 'a[data-dir]', function(e) {
       var foldername = $(this).attr("data-dir");
-      $("#renamefile").hide();
-    $("#renamefolder").show();
       $("#newfolder").show();
       $("input#clickfoldername").val(foldername);
-      $("#newfile").show();
-      $("#delletefile").hide();
-      $("#delletefolder").show();
-     console.log(foldername);
+      $("input#hozirclick").val(foldername);
+      // $("#renamefile").hide();
+      // $("#renamefolder").show();
+      // $("#newfile").show();
+      // $("#delletefile").hide();
+      // $("#delletefolder").show();
+      // console.log(foldername);
 });
 
 function oynacha(html, faylyoli) {
@@ -226,40 +253,15 @@ $.ajax({
     }
   }
 });
-};
+}
 
-function delletefile() {
-var fayl = $("#clickfilename").val();
+function dellete() {
+var fayl = $("#hozirclick").val();
 var clickfoldername = $("#clickfoldername").val();
 var proceed = confirm("Are you sure you want to delete this " + fayl + " file?");
 if (proceed) {
-  $.ajax({
-    url: API_URL,
-    type: "POST",
-    data: {
-      action: "dellete-file",
-      fayl: fayl
-    },
-    dataType: "JSON",
-    beforeSend: function() {
-      $('textarea#adsafadsfasd').text("");
-    },
-    success: function(a) {
-      if (a.success) {
-        reloadFiles(clickfoldername);
-      } else {
-        alert(a.message);
-        reloadFiles(clickfoldername);
-      }
-    }
-  })
-}
-}
-
-function delletefolder() {
-var fayl = $("#clickfoldername").val();
-var proceed = confirm("Are you sure you want to delete this " + fayl + " folder?");
-if (proceed) {
+var typesclick = getselecttree();
+if (typesclick == 'open-dir') {
   $.ajax({
     url: API_URL,
     type: "POST",
@@ -269,7 +271,7 @@ if (proceed) {
     },
     dataType: "JSON",
     beforeSend: function() {
-      $('textarea#adsafadsfasd').text("");
+      // $('textarea#adsafadsfasd').text("");
     },
     success: function(a) {
       if (a.success) {
@@ -279,41 +281,35 @@ if (proceed) {
         reloadFiles();
       }
     }
-  })
-}
-}
-
-function renamefolder() {
-  var oldname = $("#clickfoldername").val();
-var filename = prompt("Enter the folder new name:", oldname);
-if (filename == null || filename == "") {
-  console.log("The file was not named")
-} else {
+  });
+}else if(typesclick == 'open-file') {
   $.ajax({
     url: API_URL,
     type: "POST",
     data: {
-      action: 'rename-folder',
-      newname: filename,
-      oldname: oldname
+      action: "dellete-file",
+      fayl: fayl
     },
     dataType: "JSON",
-    beforeSend: function() {},
+    beforeSend: function() {
+      //  $('textarea#adsafadsfasd').text("");
+    },
     success: function(a) {
       if (a.success) {
-        reloadFiles(filename);
+        reloadFiles(clickfoldername);
       } else {
-        alert(a.message)
-        reloadFiles(oldname);
+        alert(a.message);
+        reloadFiles(clickfoldername);
       }
     }
-  })
+  });
+}
 }
 }
 
-function renamefile() {
-  var oldname = $("#clickfilename").val();
-var filename = prompt("Enter the file new name:", oldname);
+function rename() {
+var oldname = $("#hozirclick").val();
+var filename = prompt("Enter the new name:", oldname);
 if (filename == null || filename == "") {
   console.log("The file was not named")
 } else {
@@ -321,7 +317,7 @@ if (filename == null || filename == "") {
     url: API_URL,
     type: "POST",
     data: {
-      action: 'rename-file',
+      action: 'rename',
       newname: filename,
       oldfilename: oldname
     },
@@ -358,7 +354,8 @@ if (filename == null || filename == "") {
     success: function(a) {
       if (a.success) {
         reloadFiles(foldername);
-        open_ace(a.data.fileopen);
+        open_ace(foldername +""+ filename);
+        console.log(foldername +""+ filename);
         $("#openfilename").val(a.data.faylyoli);
         var hash = window.location.hash;
         if (hash) {
@@ -438,56 +435,20 @@ shortcut.add("ctrl+r", function() {
   'target': document
   });
 
-  shortcut.add("shift+delete", function() {
-    delletefile();
-    }, {
-    'type': 'keydown',
-    'propagate': false,
-    'disable_in_input': false,
-    'target': document
-    });
-
     shortcut.add("f2", function() {
-      renamefile();
+      rename();
       }, {
       'type': 'keydown',
       'propagate': false,
       'disable_in_input': false,
       'target': document
       });
-      shortcut.add("f3", function() {
-        renamefolder();
-        }, {
-        'type': 'keydown',
-        'propagate': false,
-        'disable_in_input': false,
-        'target': document
-        });
-
-    shortcut.add("ctrl+delete", function() {
-      delletefolder();
+     
+    shortcut.add("delete", function() {
+      dellete();
       }, {
       'type': 'keydown',
       'propagate': false,
       'disable_in_input': false,
       'target': document
       });
-
-/*
-      shortcut.add("Shift+f", function() {
-        newfile();
-      }, {
-        'type': 'keydown',
-        'propagate': false,
-        'disable_in_input': false,
-        'target': document
-      });
-      shortcut.add("Shift+p", function() {
-        newfolder();
-      }, {
-        'type': 'keydown',
-        'propagate': false,
-        'disable_in_input': false,
-        'target': document
-      });
-      */

@@ -8,13 +8,14 @@ defined('_IN_JOHNCMS') || die('Error: restricted access');
 define('V', '2.1 | Akbarali');
 define('DEMO_VERSION', false);
 define('DEMO_TEXT_ERROR', 'This action cannot be performed in the demo version');
+define('MAIN_DIR', '.');
 
 function json_error($message, $params = [])
 {
     return json_encode(array_merge([
         'error' => true,
         'message' => $message,
-    ], $params), JSON_UNESCAPED_UNICODE);
+    ], $params), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 }
 
 function json_success($message, $params = [])
@@ -22,7 +23,7 @@ function json_success($message, $params = [])
     return json_encode(array_merge([
         'success' => true,
         'message' => $message,
-    ], $params), JSON_UNESCAPED_UNICODE);
+    ], $params), JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
 }
 
 function deleteDirectory($dir)
@@ -42,6 +43,38 @@ function deleteDirectory($dir)
         }
     }
     return rmdir($dir);
+}
+
+function scan($dir)
+{
+    $files = array();
+    if (file_exists($dir)) {
+        foreach (scandir($dir) as $f) {
+            if (!$f || $f[0] == '.') {
+                continue; // Ignore hidden files
+            }
+            if (is_dir($dir . '/' . $f)) {
+                // The path is a folder
+                $files[] = array(
+                    "name" => $f,
+                    "type" => "folder",
+                    "path" => $dir . '/' . $f,
+                    "time" => date("d F Y H:i", filectime($dir . '/' . $f)),
+                    "items" => scan($dir . '/' . $f) // Recursively get the contents of the folder
+                );
+            } else {
+                // It is a file
+                $files[] = array(
+                    "name" => $f,
+                    "type" => "file",
+                    "path" => $dir . '/' . $f,
+                    "time" => date("d F Y H:i", filectime($dir . '/' . $f)),
+                    "size" => filesize($dir . '/' . $f) // Gets the size of this file
+                );
+            }
+        }
+    }
+    return $files;
 }
 
 function passwordchange($password)
