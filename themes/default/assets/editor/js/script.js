@@ -721,7 +721,6 @@ shortcut.add("Esc", function() {
   'disable_in_input': false,
   'target': document
 });
-*/
 shortcut.add("shift+n", function() {
   newpassword();
 }, {
@@ -730,3 +729,4 @@ shortcut.add("shift+n", function() {
   'disable_in_input': false,
   'target': document
 });
+*/

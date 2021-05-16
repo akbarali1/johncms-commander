@@ -15,6 +15,12 @@ function files($dir, $first = true)
 {
   $data = '';
   if ($first === true) {
+    $data .= '
+    <div class="row">
+      
+    </div>
+
+    ';
     $data .= '<ul><li data-jstree=\'{ "opened" : true }\'><a href="#" class="open-dir" data-dir="' . MAIN_DIR . '">' . basename($dir) . '</a>';
   }
   $data .= '<ul class="files">';

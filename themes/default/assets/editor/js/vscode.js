@@ -5,40 +5,70 @@
 */
 const API_URL = '../api/';
 
-function save_file() {
-var contents = $('textarea#adsafadsfasd').text(),
-  fayl_yoli = $("input#openfilename").val();
-$.ajax({
-  url: API_URL,
-  type: "POST",
-  data: {
-    action: "save-file",
-    contents: contents,
-    fayl_yoli: fayl_yoli
-  },
-  dataType: 'JSON',
-  beforeSend: function() {
-    $('#bajarilmoqda').show();
-  },
-  success: function(a) {
-    var fadeTimeout = 1000;
-    if (a.success) {
-      $("#bajarilmoqda").css("background-color", "green");
-      $('#error-message').hide();
-      clearTimeout(window.msg_tmt);
-      window.msg_tmt = setTimeout(function() {
-        $('#bajarilmoqda').fadeOut();
-      }, fadeTimeout);
-      $("#bajarilmoqda").css("background-color", "");
-    } else {
-      alert(a.message);
-      $('#bajarilmoqda').hide();
-      $('#error-message').show();
+function save_file(idbu) {
+  var contents = $('textarea#adsafadsfasd_' + idbu).val(), fayl_yoli = $('input#fayl_yoli_' + idbu).val();
+  $.ajax({
+    url: API_URL,
+    type: "POST",
+    data: {
+      action: "save-file",
+      fayl_yoli: fayl_yoli,
+      contents: contents,
+    },
+    dataType: 'JSON',
+    beforeSend: function() {
+      $('#bajarilmoqda_' + idbu).show();
+    },
+    success: function(a) {
+      var fadeTimeout = 1000;
+      if (a.success) {
+      $('#bajarilmoqda_' + idbu).css("background-color", "green");
+        $('#error-message_' + idbu).hide();
+        clearTimeout(window.msg_tmt);
+        window.msg_tmt = setTimeout(function() {
+          $('#bajarilmoqda_' + idbu).fadeOut();
+        }, fadeTimeout);
+      $('#bajarilmoqda_' + idbu).css("background-color", "");
+      } else {
+        alert(a.message);
+        $('#bajarilmoqda_' + idbu).hide();
+        $('#error-message_' + idbu).show();
+      }
     }
-  }
-});
+  });
 }
-    function reloadFiles(hash) {
+
+var makeBackup = function(idbu) {
+  var contents = $('textarea#adsafadsfasd_' + idbu).text(), fayl_yoli = $('input#fayl_yoli_' + idbu).val();
+  $.ajax({
+    url: API_URL,
+    method: "POST",
+    data: {
+      action: 'backup',
+      contents: contents,
+      fayl_yoli: fayl_yoli
+    },
+    dataType: 'JSON',
+    beforeSend: function() {
+      $('#bajarilmoqda_' + idbu).show();
+    },
+    success: function(reply) {
+      var fadeTimeout = 1000;
+      if (reply.success) {
+        clearTimeout(window.msg_tmt);
+        window.msg_tmt = setTimeout(function() {
+          $('#bajarilmoqda_' + idbu).fadeOut();
+        }, fadeTimeout);
+      } else {
+        alert(reply.message);
+        $('#bajarilmoqda_' + idbu).hide();
+        $('#error-message_' + idbu).show();
+      }
+    }
+  });
+}
+
+function reloadFiles(hash) {
     $.ajax({
      url: window.location.href,
      type: "POST",
@@ -101,7 +131,7 @@ var winbox = new WinBox({
     // background: "#ff005d",
     border: 2,
     html: html,
-    width: '41.5%',
+    width: '41.3%',
     height: '100%',
     y: "center",
     x: "center",
@@ -146,7 +176,7 @@ $.ajax({
         </div>
         <textarea name="editor_`+i+`" id="adsafadsfasd_`+i+`" style="width: 100%;height: 10%; display:none;">`+ a.data.file +`</textarea>
         <input type="text"  style="visibility:hidden;position: absolute;" value="` + faylyoli + `" id="fayl_yoli_`+ i +`"  name="fayl_yoli_`+ i +`">
-        <pre id="editor_`+i+`" onmouseover="kursor_keldi(` + i + `)" style="width: 95%; height: 99.7%" class="acepre"></pre>
+        <pre id="editor_`+i+`" onmouseover="kursor_keldi(` + i + `)" style="width: 95%;height: 99.7%;font-size: 14px;color: #e3e3e3;" class="acepre"></pre>
       </div>
     </div>`, faylyoli);
     require.config({
@@ -162,12 +192,12 @@ $.ajax({
         enableBasicAutocompletion: true,
         enableLiveAutocompletion: true,
         fontSize: "14px",
+        enableEmmet: true,
+        wrap: true,
       });
       editor.setTheme("ace/theme/tomorrow_night_eighties");
       ace.require('ace/ext/settings_menu').init(editor);
       editor.session.setMode("ace/mode/" + a.data.faylturi);
-      editor.setOption("enableEmmet", true);
-      editor.setOption("wrap", true);
       editor.setValue($('textarea#adsafadsfasd_'+ i).val());
       editor.getSession().on('change', function() {
         var $qiymat = $("#ochilganeditor").val();
@@ -189,53 +219,6 @@ $.ajax({
         }
       })
     });
-      // load ace and extensions
-      require(["ace/ace", "ace/ext/emmet", "ace/ext/settings_menu", "ace/ext/language_tools"], function(ace) {
-      var editor = ace.edit("editor");
-      editor.setOptions({
-       copyWithEmptySelection: true,
-       enableSnippets: true,
-       enableBasicAutocompletion: true,
-       enableLiveAutocompletion: true,
-       fontSize: "14px",
-      });
-      editor.setTheme("ace/theme/tomorrow_night_eighties");
-      var textarea = $('textarea[name="editor"]').hide();
-      ace.require('ace/ext/settings_menu').init(editor);
-      editor.session.setMode("ace/mode/php");
-      // enable emmet on the current editor
-      editor.setOption("enableEmmet", true);
-      editor.setOption("wrap", true);
-      editor.getSession().setValue(textarea.val());
-      editor.getSession().on('change', function() {
-       textarea.val(editor.getSession().getValue());
-      });
-      
-      editor.commands.addCommand({
-       name: "showKeyboardShortcuts",
-       bindKey: {
-         win: "Ctrl-Alt-h",
-         mac: "Command-Alt-h"
-       },
-       exec: function(editor) {
-         ace.config.loadModule("ace/ext/keybinding_menu", function(module) {
-           module.init(editor);
-           editor.showKeyboardShortcuts()
-         })
-       }
-      })
-      });
-
-
-
-
-
-
-
-
-
-
-
     } else if (a.data.boshqacha) {
       $(location).attr('href', a.data.fayl_yoli);
     } else {
@@ -421,76 +404,32 @@ if (newfoldername == null || newfoldername == "") {
 }
 }
 
-var makeBackup = function() {
-  var contents = $('textarea#adsafadsfasd').text(), fayl_yoli = $("input#openfilename").val();
-  $.ajax({
-    url: API_URL,
-    method: "POST",
-    data: {
-      action: 'backup',
-      contents: contents,
-      fayl_yoli: fayl_yoli
-    },
-    dataType: 'JSON',
-    beforeSend: function() {
-      $('#bajarilmoqda').show();
-    },
-    success: function(reply) {
-      var fadeTimeout = 1000;
-      if (reply.success) {
-        reloadFiles(fayl_yoli);
-        clearTimeout(window.msg_tmt);
-        window.msg_tmt = setTimeout(function() {
-          $('#bajarilmoqda').fadeOut();
-        }, fadeTimeout);
-      } else {
-        reloadFiles(fayl_yoli);
-        alert(reply.message);
-        $('#bajarilmoqda').hide();
-        $('#error-message').show();
-      }
-    }
-  });
-}
+$('#do-backup').on('click', function(evt) {
+  var idbu = $("#ochilganeditor").val();
+  evt.preventDefault();
+  makeBackup(idbu);
+});
 
-  shortcut.add("Ctrl+s", function() {
-  save_file();
-  }, {
+shortcut.add("Ctrl+s", function() {
+  var idbu = $("#ochilganeditor").val();
+  save_file(idbu);
+}, {
   'type': 'keydown',
   'propagate': false,
   'disable_in_input': false,
   'target': document
-  });
-  
- shortcut.add("shift+h", function() {
-  var hash = window.location.hash;
-     alert(hash);
-  },{
-  'type': 'keydown',
-  'propagate': false,
-  'disable_in_input': false,
-  'target': document
-  });
+});
 
-  shortcut.add("Shift+f12", function() {
-  save_file();
-  }, {
+shortcut.add("Shift+f12", function() {
+  var idbu = $("#ochilganeditor").val();
+  save_file(idbu);
+}, {
   'type': 'keydown',
   'propagate': false,
   'disable_in_input': false,
   'target': document
-  });
-  
-  shortcut.add("Ctrl+b", function() {
-  makeBackup();
-  }, {
-  'type': 'keydown',
-  'propagate': false,
-  'disable_in_input': false,
-  'target': document
-  });
-  
-  shortcut.add("Shift+r", function() {
+});
+shortcut.add("ctrl+r", function() {
   reloadFiles();
   }, {
   'type': 'keydown',
@@ -534,7 +473,7 @@ var makeBackup = function() {
       'target': document
       });
 
-
+/*
       shortcut.add("Shift+f", function() {
         newfile();
       }, {
@@ -551,3 +490,4 @@ var makeBackup = function() {
         'disable_in_input': false,
         'target': document
       });
+      */
