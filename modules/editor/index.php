@@ -37,6 +37,10 @@ switch ($act) {
     require 'includes/api.php';
     break;
 
+  case 'vscode':
+    require 'includes/vscode.php';
+    break;
+
   case 'scan':
     require 'includes/scan.php';
     break;

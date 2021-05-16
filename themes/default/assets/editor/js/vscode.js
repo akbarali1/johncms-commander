@@ -3,54 +3,13 @@
 * Johncms Profile Link: https://johncms.com/profile/?user=38217
 * Those who want to sponsor: Webmoney WMR: R853215959425, Webmoney WMZ: Z401474330355, Webmoney WMY: Y194307290426
 */
-// setup paths
-  require.config({
-    paths: {
-     "ace": "./assets/js/lib/ace"
-    }
-    });
-    // load ace and extensions
-    require(["ace/ace", "ace/ext/emmet", "ace/ext/settings_menu", "ace/ext/language_tools"], function(ace) {
-    var editor = ace.edit("editor");
-    editor.setOptions({
-     copyWithEmptySelection: true,
-     enableSnippets: true,
-     enableBasicAutocompletion: true,
-     enableLiveAutocompletion: true,
-     fontSize: "14px",
-    });
-    editor.setTheme("ace/theme/tomorrow_night_eighties");
-    var textarea = $('textarea[name="editor"]').hide();
-    ace.require('ace/ext/settings_menu').init(editor);
-    editor.session.setMode("ace/mode/php");
-    // enable emmet on the current editor
-    editor.setOption("enableEmmet", true);
-    editor.setOption("wrap", true);
-    editor.getSession().setValue(textarea.val());
-    editor.getSession().on('change', function() {
-     textarea.val(editor.getSession().getValue());
-    });
-    
-    editor.commands.addCommand({
-     name: "showKeyboardShortcuts",
-     bindKey: {
-       win: "Ctrl-Alt-h",
-       mac: "Command-Alt-h"
-     },
-     exec: function(editor) {
-       ace.config.loadModule("ace/ext/keybinding_menu", function(module) {
-         module.init(editor);
-         editor.showKeyboardShortcuts()
-       })
-     }
-    })
-    });
+const API_URL = '../api/';
 
 function save_file() {
 var contents = $('textarea#adsafadsfasd').text(),
   fayl_yoli = $("input#openfilename").val();
 $.ajax({
-  url: "./api.php",
+  url: API_URL,
   type: "POST",
   data: {
     action: "save-file",
@@ -136,9 +95,34 @@ $(document).on('click', 'a[data-dir]', function(e) {
      console.log(foldername);
 });
 
+function oynacha(html, faylyoli) {
+var winbox = new WinBox({
+    title: faylyoli,
+    // background: "#ff005d",
+    border: 2,
+    html: html,
+    width: '41.5%',
+    height: '100%',
+    y: "center",
+    x: "center",
+    /*
+     * Bu narsa winboxni yopmoqchi bo`lsa chiqadi siz haqiqatdan oynani yopasizmi deb
+    onclose: function(force) {
+      return !confirm("Close window?");
+    }
+    */
+  });
+  // winbox.fullscreen(false);
+}
+
+function kursor_keldi(id) {
+  $('#ochilganeditor').val(id);
+}
+
+var i = 0;
 function open_ace(faylyoli) {
 $.ajax({
-  url: "./api.php",
+  url: API_URL,
   type: "POST",
   data: {
     action: "open-file",
@@ -146,56 +130,112 @@ $.ajax({
   },
   dataType: "JSON",
   beforeSend: function() {
-    $('textarea#adsafadsfasd').text("");
+   // $('textarea#adsafadsfasd').text("");
   },
   success: function(a) {
     if (a.data.faylturi) {
-      $('textarea#adsafadsfasd').text(a.data.file);
-      $("input#fayl_yoli").val(a.data.fayl_yoli);
-      require.config({
-        paths: {
-          "ace": "./assets/js/lib/ace"
-        }
+      ++i;
+      oynacha(`<div class="outer-div" id="custom-popover">
+      <div class="inner-div">
+        <div class="savebackupedix"  >
+          <img src="/themes/default/assets/editor/icons/svg/savefile.svg" alt="" onclick="save_file(`+ i +`);" style="display:block;width: 100%;">
+          <br>
+          <img src="/themes/default/assets/editor/icons/svg/backup.svg" idbu="`+ i +`" onclick="makeBackup(`+ i +`);" style="display:block;width: 100%;"><br>
+          <img src="/themes/default/assets/editor/icons/svg/prloader.svg" alt="" id="bajarilmoqda_` + i + `" style="display:none;width: 100%;"><br>
+          <img src="/themes/default/assets/editor/icons/svg/warning.svg" alt="The file was not saved. Refresh the page" title="The file was not saved. Refresh the page" id="error-message_` + i + `" style="display:none;width: 100%;"><br>
+        </div>
+        <textarea name="editor_`+i+`" id="adsafadsfasd_`+i+`" style="width: 100%;height: 10%; display:none;">`+ a.data.file +`</textarea>
+        <input type="text"  style="visibility:hidden;position: absolute;" value="` + faylyoli + `" id="fayl_yoli_`+ i +`"  name="fayl_yoli_`+ i +`">
+        <pre id="editor_`+i+`" onmouseover="kursor_keldi(` + i + `)" style="width: 95%; height: 99.7%" class="acepre"></pre>
+      </div>
+    </div>`, faylyoli);
+    require.config({
+      paths: {
+        "ace": "/themes/default/assets/editor/js/lib/ace"
+      }
+    });
+    require(["ace/ace", "ace/ext/emmet", "ace/ext/settings_menu", "ace/ext/language_tools"], function(ace) {
+      var editor = ace.edit("editor_" + i);
+      editor.setOptions({
+        copyWithEmptySelection: true,
+        enableSnippets: true,
+        enableBasicAutocompletion: true,
+        enableLiveAutocompletion: true,
+        fontSize: "14px",
       });
+      editor.setTheme("ace/theme/tomorrow_night_eighties");
+      ace.require('ace/ext/settings_menu').init(editor);
+      editor.session.setMode("ace/mode/" + a.data.faylturi);
+      editor.setOption("enableEmmet", true);
+      editor.setOption("wrap", true);
+      editor.setValue($('textarea#adsafadsfasd_'+ i).val());
+      editor.getSession().on('change', function() {
+        var $qiymat = $("#ochilganeditor").val();
+        if ($qiymat != '') {
+          $('textarea#adsafadsfasd_'+ $qiymat).val(editor.getSession().getValue());
+        }            
+      });
+      editor.commands.addCommand({
+        name: "showKeyboardShortcuts",
+        bindKey: {
+          win: "Ctrl-Alt-h",
+          mac: "Command-Alt-h"
+        },
+        exec: function(editor) {
+          ace.config.loadModule("ace/ext/keybinding_menu", function(module) {
+            module.init(editor);
+            editor.showKeyboardShortcuts()
+          })
+        }
+      })
+    });
       // load ace and extensions
       require(["ace/ace", "ace/ext/emmet", "ace/ext/settings_menu", "ace/ext/language_tools"], function(ace) {
-        var editor = ace.edit("editor");
-        editor.setOptions({
-          copyWithEmptySelection: true,
-          enableSnippets: true,
-          enableBasicAutocompletion: true,
-          enableLiveAutocompletion: true,
-          fontSize: "14px",
-        });
-        editor.setTheme("ace/theme/tomorrow_night_eighties");
-        ace.require('ace/ext/settings_menu').init(editor);
-        editor.session.setMode("ace/mode/" + a.data.faylturi);
-       // enable emmet on the current editor
-        editor.setOption("enableEmmet", true);
-        editor.setOption("wrap", true);
-        editor.setValue($('textarea#adsafadsfasd').text());
-        editor.getSession().on('change', function() {
-          $('textarea#adsafadsfasd').text(editor.getSession().getValue());
-        });
-        editor.commands.addCommand({
-          name: "showKeyboardShortcuts",
-          bindKey: {
-            win: "Ctrl-Alt-h",
-            mac: "Command-Alt-h"
-          },
-          exec: function(editor) {
-            ace.config.loadModule("ace/ext/keybinding_menu", function(module) {
-              module.init(editor);
-              editor.showKeyboardShortcuts()
-            })
-          }
-        })
+      var editor = ace.edit("editor");
+      editor.setOptions({
+       copyWithEmptySelection: true,
+       enableSnippets: true,
+       enableBasicAutocompletion: true,
+       enableLiveAutocompletion: true,
+       fontSize: "14px",
       });
-      $('body,html').animate({
-        scrollTop: 5
-      }, 500);
-      $(".outer-div").css("display", "flex");
-      $("body").css("overflow", "hidden");
+      editor.setTheme("ace/theme/tomorrow_night_eighties");
+      var textarea = $('textarea[name="editor"]').hide();
+      ace.require('ace/ext/settings_menu').init(editor);
+      editor.session.setMode("ace/mode/php");
+      // enable emmet on the current editor
+      editor.setOption("enableEmmet", true);
+      editor.setOption("wrap", true);
+      editor.getSession().setValue(textarea.val());
+      editor.getSession().on('change', function() {
+       textarea.val(editor.getSession().getValue());
+      });
+      
+      editor.commands.addCommand({
+       name: "showKeyboardShortcuts",
+       bindKey: {
+         win: "Ctrl-Alt-h",
+         mac: "Command-Alt-h"
+       },
+       exec: function(editor) {
+         ace.config.loadModule("ace/ext/keybinding_menu", function(module) {
+           module.init(editor);
+           editor.showKeyboardShortcuts()
+         })
+       }
+      })
+      });
+
+
+
+
+
+
+
+
+
+
+
     } else if (a.data.boshqacha) {
       $(location).attr('href', a.data.fayl_yoli);
     } else {
@@ -211,7 +251,7 @@ var clickfoldername = $("#clickfoldername").val();
 var proceed = confirm("Are you sure you want to delete this " + fayl + " file?");
 if (proceed) {
   $.ajax({
-    url: "./api.php",
+    url: API_URL,
     type: "POST",
     data: {
       action: "dellete-file",
@@ -238,7 +278,7 @@ var fayl = $("#clickfoldername").val();
 var proceed = confirm("Are you sure you want to delete this " + fayl + " folder?");
 if (proceed) {
   $.ajax({
-    url: "./api.php",
+    url: API_URL,
     type: "POST",
     data: {
       action: "dellete-folder",
@@ -267,7 +307,7 @@ if (filename == null || filename == "") {
   console.log("The file was not named")
 } else {
   $.ajax({
-    url: "./api.php",
+    url: API_URL,
     type: "POST",
     data: {
       action: 'rename-folder',
@@ -295,7 +335,7 @@ if (filename == null || filename == "") {
   console.log("The file was not named")
 } else {
   $.ajax({
-    url: "./api.php",
+    url: API_URL,
     type: "POST",
     data: {
       action: 'rename-file',
@@ -323,7 +363,7 @@ if (filename == null || filename == "") {
   console.log("The file was not named")
 } else {
   $.ajax({
-    url: "./api.php",
+    url: API_URL,
     type: "POST",
     data: {
       action: 'new-file',
@@ -357,7 +397,7 @@ if (newfoldername == null || newfoldername == "") {
   console.log("The folder was not named")
 } else {
   $.ajax({
-    url: "./api.php",
+    url: API_URL,
     type: "POST",
     data: {
       action: 'new-folder',
@@ -384,7 +424,7 @@ if (newfoldername == null || newfoldername == "") {
 var makeBackup = function() {
   var contents = $('textarea#adsafadsfasd').text(), fayl_yoli = $("input#openfilename").val();
   $.ajax({
-    url: "./api.php",
+    url: API_URL,
     method: "POST",
     data: {
       action: 'backup',

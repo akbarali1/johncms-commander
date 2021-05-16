@@ -92,12 +92,14 @@ The file editor allows you to quickly write the most commonly used codes of john
 
 Additional abbreviations are added slowly
 
-# images
-   ![alt text](https://raw.githubusercontent.com/akbarali1/johncms-commander/main/modules/editor/images/DB.png)
-   ![alt text](https://raw.githubusercontent.com/akbarali1/johncms-commander/main/modules/editor/images/isvalid.png)
-   ![alt text](https://raw.githubusercontent.com/akbarali1/johncms-commander/main/modules/editor/images/isvalidadd.png)
-   ![alt text](https://raw.githubusercontent.com/akbarali1/johncms-commander/main/modules/editor/images/jsassets.png)
-   ![alt text](https://raw.githubusercontent.com/akbarali1/johncms-commander/main/modules/editor/images/jsassetsadd.png)
-   ![alt text](https://raw.githubusercontent.com/akbarali1/johncms-commander/main/modules/editor/images/render.png)
-   ![alt text](https://raw.githubusercontent.com/akbarali1/johncms-commander/main/modules/editor/images/redndeerad.png)
-   ![alt text](https://raw.githubusercontent.com/akbarali1/johncms-commander/main/modules/editor/images/tanbs.png)
+# images editors
+
+![alt text](https://raw.githubusercontent.com/akbarali1/johncms-commander/main/modules/editor/images/vscode-clone.png)
+![alt text](https://raw.githubusercontent.com/akbarali1/johncms-commander/main/modules/editor/images/DB.png)
+![alt text](https://raw.githubusercontent.com/akbarali1/johncms-commander/main/modules/editor/images/isvalid.png)
+![alt text](https://raw.githubusercontent.com/akbarali1/johncms-commander/main/modules/editor/images/isvalidadd.png)
+![alt text](https://raw.githubusercontent.com/akbarali1/johncms-commander/main/modules/editor/images/jsassets.png)
+![alt text](https://raw.githubusercontent.com/akbarali1/johncms-commander/main/modules/editor/images/jsassetsadd.png)
+![alt text](https://raw.githubusercontent.com/akbarali1/johncms-commander/main/modules/editor/images/render.png)
+![alt text](https://raw.githubusercontent.com/akbarali1/johncms-commander/main/modules/editor/images/redndeerad.png)
+![alt text](https://raw.githubusercontent.com/akbarali1/johncms-commander/main/modules/editor/images/tanbs.png)
