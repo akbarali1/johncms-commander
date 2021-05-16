@@ -22,11 +22,11 @@ function files($dir, $first = true)
         if (is_dir($dir . DS . $file) && (empty(PATTERN_DIRECTORIES) || preg_match(PATTERN_DIRECTORIES, $file))) {
             $dir_path = str_replace(MAIN_DIR . DS, '', $dir . DS . $file);
             $data .= '<li class="dir">'
-                . '<a akbarali href="#' . MAIN_DIR . $dir_path . '\" class="open-dir" data-dir=".\\' . $dir_path . '\">' . $file . '</a>' . files($dir . DS . $file, false) . '</li>';
+                . '<a akbarali href="#' . MAIN_DIR . $dir_path . '/" class="open-dir" data-dir="./' . $dir_path . '/">' . $file . '</a>' . files($dir . DS . $file, false) . '</li>';
         } else if (empty(PATTERN_FILES) || preg_match(PATTERN_FILES, $file)) {
             $file_path = str_replace(MAIN_DIR . DS, '', $dir . DS . $file);
             $data .= '<li class="file ' . (is_writable($file_path) ? 'editable' : null) . '" data-jstree=\'{ "icon" : "jstree-file" }\'>'
-                . '<a href="#' . MAIN_DIR . $file_path . '" data-file=".\\' . $file_path . '" class="open-file">' . $file . '</a></li>';
+                . '<a href="#' . MAIN_DIR . $file_path . '" data-file="./' . $file_path . '" class="open-file">' . $file . '</a></li>';
         }
     }
     $data .= '</ul>';
