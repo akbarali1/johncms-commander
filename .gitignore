@@ -1,5 +1,17 @@
 /config/*
 !/config/routes.local.php
+!/config/autoload/
+/config/autoload/bbcode.global.php
+/config/autoload/database.local.php
+/config/autoload/dependencies.global.php
+/config/autoload/filesystem.global.php
+/config/autoload/forum.global.php
+/config/autoload/htmlpurifier.global.php
+/config/autoload/mail.global.php
+/config/autoload/modules.global.php
+/config/autoload/news.global.php
+/config/autoload/system.global.php
+/config/autoload/system.local.php
 /assets/
 /.github/
 /data/

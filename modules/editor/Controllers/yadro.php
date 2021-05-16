@@ -4,10 +4,10 @@
 * Johncms Profile Link: https://johncms.com/profile/?user=38217
 * Those who want to sponsor: Webmoney WMR: R853215959425, Webmoney WMZ: Z401474330355, Webmoney WMY: Y194307290426
 */
+defined('_IN_JOHNCMS') || die('Error: restricted access');
 define('V', '2.1 | Akbarali');
 define('DEMO_VERSION', false);
 define('DEMO_TEXT_ERROR', 'This action cannot be performed in the demo version');
-define('MAIN_DIR', '.');
 
 function json_error($message, $params = [])
 {
